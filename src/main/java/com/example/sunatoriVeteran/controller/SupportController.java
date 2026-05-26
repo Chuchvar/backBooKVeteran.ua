@@ -32,6 +32,7 @@ public class SupportController {
     @Autowired
     private JwtUtil jwtUtil;
 
+    // Створити новий чат підтримки (USER)
     @PostMapping("/chats")
     public ResponseEntity<?> createChat(
             @RequestHeader("Authorization") String token,
@@ -49,6 +50,7 @@ public class SupportController {
             chat.setCreatedAt(LocalDateTime.now());
             chatRepository.save(chat);
 
+            // Створити перше повідомлення
             String firstMessage = body.get("message");
             if (firstMessage != null && !firstMessage.isBlank()) {
                 SupportMessage msg = new SupportMessage();
@@ -67,6 +69,7 @@ public class SupportController {
         }
     }
 
+    // Отримати мої чати (USER)
     @GetMapping("/chats/my")
     public ResponseEntity<?> getMyChats(@RequestHeader("Authorization") String token) {
         try {
@@ -81,6 +84,7 @@ public class SupportController {
         }
     }
 
+    // Отримати всі чати (ADMIN)
     @GetMapping("/chats")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> getAllChats(@RequestHeader("Authorization") String token) {
@@ -92,6 +96,7 @@ public class SupportController {
             List<SupportChat> unassignedChats = chatRepository.findByAdminIdIsNullOrderByCreatedAtDesc();
             List<SupportChat> myChats = chatRepository.findByAdminIdOrderByCreatedAtDesc(user.getId());
             
+            // Combine and sort by createdAt desc
             java.util.List<SupportChat> combined = new java.util.ArrayList<>();
             combined.addAll(unassignedChats);
             combined.addAll(myChats);
@@ -103,6 +108,7 @@ public class SupportController {
         }
     }
 
+    // Взяти чат (ADMIN)
     @PutMapping("/chats/{chatId}/take")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> takeChat(
@@ -129,6 +135,7 @@ public class SupportController {
         }
     }
 
+    // Отримати повідомлення чату
     @GetMapping("/chats/{chatId}/messages")
     public ResponseEntity<?> getChatMessages(
             @RequestHeader("Authorization") String token,
@@ -141,6 +148,7 @@ public class SupportController {
             SupportChat chat = chatRepository.findById(chatId)
                     .orElseThrow(() -> new RuntimeException("Чат не знайдено"));
 
+            // Перевірити доступ: або власник, або закріплений адмін
             if (!chat.getUserId().equals(user.getId())) {
                 if (!"ADMIN".equals(user.getRole())) {
                     return ResponseEntity.status(403).body(Map.of("error", "Доступ заборонено"));
@@ -156,6 +164,7 @@ public class SupportController {
         }
     }
 
+    // Надіслати повідомлення
     @PostMapping("/chats/{chatId}/messages")
     public ResponseEntity<?> sendMessage(
             @RequestHeader("Authorization") String token,
@@ -169,6 +178,7 @@ public class SupportController {
             SupportChat chat = chatRepository.findById(chatId)
                     .orElseThrow(() -> new RuntimeException("Чат не знайдено"));
 
+            // Перевірити доступ
             if (!chat.getUserId().equals(user.getId())) {
                 if (!"ADMIN".equals(user.getRole())) {
                     return ResponseEntity.status(403).body(Map.of("error", "Доступ заборонено"));
@@ -198,6 +208,7 @@ public class SupportController {
         }
     }
 
+    // Закрити чат (ADMIN)
     @PutMapping("/chats/{chatId}/close")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> closeChat(@PathVariable Long chatId) {
@@ -209,13 +220,16 @@ public class SupportController {
         }).orElse(ResponseEntity.notFound().build());
     }
 
+    // Видалити чат (ADMIN)
     @DeleteMapping("/chats/{chatId}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> deleteChat(@PathVariable Long chatId) {
         try {
+            // First delete all messages associated with the chat
             List<SupportMessage> messages = messageRepository.findByChatIdOrderByCreatedAtAsc(chatId);
             messageRepository.deleteAll(messages);
             
+            // Then delete the chat itself
             chatRepository.deleteById(chatId);
             
             return ResponseEntity.ok(Map.of("message", "Чат успішно видалено"));

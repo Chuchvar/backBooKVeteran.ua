@@ -101,26 +101,6 @@ public class BookingController {
             }
             auditLogService.logAction(adminEmail, "UPDATE_BOOKING_STATUS", id.toString(), details);
             
-            String expoToken = updatedBooking.getUser().getExpoPushToken();
-            if (expoToken != null && !expoToken.isEmpty()) {
-                try {
-                    org.springframework.web.client.RestTemplate restTemplate = new org.springframework.web.client.RestTemplate();
-                    HttpHeaders headers = new HttpHeaders();
-                    headers.setContentType(MediaType.APPLICATION_JSON);
-                    headers.set("Accept", "application/json");
-                    
-                    String sanatoriumName = updatedBooking.getSanatorium().getName();
-                    String pushTitle = "Оновлення статусу заявки";
-                    String pushBody = "Ваша заявка до санаторію " + sanatoriumName + " отримала статус: " + newStatus;
-                    
-                    String payload = String.format("{\"to\":\"%s\", \"title\":\"%s\", \"body\":\"%s\"}", expoToken, pushTitle, pushBody);
-                    org.springframework.http.HttpEntity<String> entity = new org.springframework.http.HttpEntity<>(payload, headers);
-                    restTemplate.postForObject("https://exp.host/--/api/v2/push/send", entity, String.class);
-                } catch (Exception e) {
-                    System.out.println("Failed to send push notification: " + e.getMessage());
-                }
-            }
-
             return ResponseEntity.ok(Map.of(
                     "message", "Статус заявки оновлено",
                     "booking", updatedBooking
@@ -137,8 +117,9 @@ public class BookingController {
     public ResponseEntity<?> getBookingDocument(@PathVariable Long id) {
         try {
             Resource resource = bookingService.getBookingDocument(id);
-            String contentType = "application/pdf";
+            String contentType = "application/pdf"; // За замовчуванням
             
+            // Якщо треба визначити тип динамічно (по розширенню)
             String filename = resource.getFilename();
             if (filename != null) {
                 if (filename.toLowerCase().endsWith(".jpg") || filename.toLowerCase().endsWith(".jpeg")) contentType = "image/jpeg";

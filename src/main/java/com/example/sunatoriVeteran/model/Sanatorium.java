@@ -36,23 +36,11 @@ public class Sanatorium {
     @Column(name = "specialization")
     private java.util.Set<SanatoriumSpecialization> specializations = new java.util.HashSet<>();
 
-    @Column(columnDefinition = "numeric(2,1) default 0")
-    private Double googleRating = 0.0;
-
-    @Column(columnDefinition = "integer default 0")
-    private Integer googleReviewsCount = 0;
-
-    @Column(columnDefinition = "numeric(2,1) default 0")
+    @Column(columnDefinition = "numeric(3,1) default 0")
     private Double ratingBooking = 0.0;
-
-    @Column(columnDefinition = "integer default 0")
-    private Integer bookingReviewsCount = 0;
 
     @Column(columnDefinition = "numeric(2,1) default 0")
     private Double ratingTripAdvisor = 0.0;
-
-    @Column(columnDefinition = "integer default 0")
-    private Integer tripAdvisorReviewsCount = 0;
 
     @Transient
     private Double averageRating;
@@ -156,16 +144,4 @@ public class Sanatorium {
 
     public Double getRatingTripAdvisor() { return ratingTripAdvisor; }
     public void setRatingTripAdvisor(Double ratingTripAdvisor) { this.ratingTripAdvisor = ratingTripAdvisor; }
-
-    public Double getGoogleRating() { return googleRating; }
-    public void setGoogleRating(Double googleRating) { this.googleRating = googleRating; }
-
-    public Integer getGoogleReviewsCount() { return googleReviewsCount; }
-    public void setGoogleReviewsCount(Integer googleReviewsCount) { this.googleReviewsCount = googleReviewsCount; }
-
-    public Integer getBookingReviewsCount() { return bookingReviewsCount; }
-    public void setBookingReviewsCount(Integer bookingReviewsCount) { this.bookingReviewsCount = bookingReviewsCount; }
-
-    public Integer getTripAdvisorReviewsCount() { return tripAdvisorReviewsCount; }
-    public void setTripAdvisorReviewsCount(Integer tripAdvisorReviewsCount) { this.tripAdvisorReviewsCount = tripAdvisorReviewsCount; }
 }

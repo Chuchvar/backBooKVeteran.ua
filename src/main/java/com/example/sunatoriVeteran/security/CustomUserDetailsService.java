@@ -10,8 +10,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-import org.springframework.cache.annotation.Cacheable;
-
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
@@ -19,7 +17,6 @@ public class CustomUserDetailsService implements UserDetailsService {
     private UserRepository userRepository;
 
     @Override
-    @Cacheable("users")
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         Optional<User> userOpt = userRepository.findFirstByEmail(email);
         if (userOpt.isEmpty()) {

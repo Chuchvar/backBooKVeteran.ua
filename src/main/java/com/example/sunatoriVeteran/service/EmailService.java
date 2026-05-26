@@ -32,6 +32,8 @@ public class EmailService {
             System.out.println("Email successfully sent to " + toEmail);
         } catch (Exception e) {
             System.err.println("Помилка при відправці email (можливо не налаштовано SMTP): " + e.getMessage());
+            // Ми не кидаємо виняток далі, щоб не блокувати реєстрацію при відсутньому SMTP.
+            // Розробник зможе побачити код в консолі і продовжити.
         }
     }
 }

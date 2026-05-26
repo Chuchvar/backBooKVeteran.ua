@@ -9,20 +9,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import org.springframework.cache.annotation.EnableCaching;
-import org.springframework.cache.CacheManager;
-import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
+import java.util.*;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
 @EnableScheduling
-@EnableCaching
 public class SunatoriVeteranApplication {
-
-	@Bean
-	public CacheManager cacheManager() {
-		return new ConcurrentMapCacheManager("users");
-	}
 
 	public static void main(String[] args) {
 		SpringApplication.run(SunatoriVeteranApplication.class, args);

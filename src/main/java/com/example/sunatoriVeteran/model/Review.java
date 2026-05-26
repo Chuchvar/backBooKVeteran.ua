@@ -17,10 +17,10 @@ public class Review {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private User user;
+    private User user; // Can be null if anon, but better to tie to User
 
     @Column(nullable = false)
-    private Integer rating;
+    private Integer rating; // 1 to 5
 
     @Column(columnDefinition = "text", nullable = false)
     private String commentText;

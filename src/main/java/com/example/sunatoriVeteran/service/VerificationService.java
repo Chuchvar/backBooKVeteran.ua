@@ -3,10 +3,9 @@ package com.example.sunatoriVeteran.service;
 import com.example.sunatoriVeteran.model.User;
 import com.example.sunatoriVeteran.model.VerificationStatus;
 import com.example.sunatoriVeteran.repository.UserRepository;
-import com.example.sunatoriVeteran.util.FileEncryptionUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -27,7 +26,7 @@ public class VerificationService {
     private static final String UPLOAD_DIR_PHOTOS = "uploads/verifications/photos/";
     private static final String UPLOAD_DIR_DOCS = "uploads/verifications/documents/";
 
-    public User submitVerificationRequest(String email, MultipartFile photo, MultipartFile document) throws Exception {
+    public User submitVerificationRequest(String email, MultipartFile photo, MultipartFile document) throws IOException {
         User user = userRepository.findFirstByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Користувача не знайдено"));
 
@@ -38,24 +37,25 @@ public class VerificationService {
             throw new RuntimeException("Документ є обов'язковим");
         }
 
+        // Збереження фото
         Path photoDir = Paths.get(UPLOAD_DIR_PHOTOS);
         if (!Files.exists(photoDir)) Files.createDirectories(photoDir);
         String photoName = UUID.randomUUID() + "_" + photo.getOriginalFilename();
         Path photoPath = photoDir.resolve(photoName);
-        byte[] encryptedPhoto = FileEncryptionUtil.encrypt(photo.getBytes());
-        Files.write(photoPath, encryptedPhoto);
+        Files.copy(photo.getInputStream(), photoPath);
 
+        // Збереження документу
         Path docDir = Paths.get(UPLOAD_DIR_DOCS);
         if (!Files.exists(docDir)) Files.createDirectories(docDir);
         String docName = UUID.randomUUID() + "_" + document.getOriginalFilename();
         Path docPath = docDir.resolve(docName);
-        byte[] encryptedDoc = FileEncryptionUtil.encrypt(document.getBytes());
-        Files.write(docPath, encryptedDoc);
+        Files.copy(document.getInputStream(), docPath);
 
+        // Оновлення полів користувача
         user.setPhotoPath(photoPath.toString());
         user.setDocumentPath(docPath.toString());
         user.setVerificationStatus(VerificationStatus.PENDING);
-        user.setVerificationMessage(null);
+        user.setVerificationMessage(null); // Очищаємо попередні повідомлення
 
         return userRepository.save(user);
     }
@@ -87,21 +87,12 @@ public class VerificationService {
         }
 
         Path path = Paths.get(filePathString);
-        if (Files.exists(path)) {
-            try {
-                byte[] encryptedData = Files.readAllBytes(path);
-                byte[] decryptedData = FileEncryptionUtil.decrypt(encryptedData);
-                return new ByteArrayResource(decryptedData) {
-                    @Override
-                    public String getFilename() {
-                        return path.getFileName().toString();
-                    }
-                };
-            } catch (Exception e) {
-                return new org.springframework.core.io.UrlResource(path.toUri());
-            }
+        Resource resource = new UrlResource(path.toUri());
+
+        if (resource.exists() || resource.isReadable()) {
+            return resource;
         } else {
-            throw new RuntimeException("Файл не знайдено на диску");
+            throw new RuntimeException("Не вдалося прочитати файл");
         }
     }
 }
