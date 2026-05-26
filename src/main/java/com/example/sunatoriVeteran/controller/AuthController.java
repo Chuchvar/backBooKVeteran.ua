@@ -183,7 +183,6 @@ public class AuthController {
             String email = payload.getEmail();
             String name = (String) payload.get("name");
 
-            // Find or create user
             Optional<User> existingUser = userRepository.findFirstByEmail(email);
             User user;
             if (existingUser.isPresent()) {
@@ -194,7 +193,7 @@ public class AuthController {
                 user.setName(name != null ? name : email);
                 user.setPassword(passwordEncoder.encode(UUID.randomUUID().toString()));
                 user.setRole("USER");
-                user.setEmailVerified(true); // Google auth implies email is verified
+                user.setEmailVerified(true);
                 userRepository.save(user);
             }
 

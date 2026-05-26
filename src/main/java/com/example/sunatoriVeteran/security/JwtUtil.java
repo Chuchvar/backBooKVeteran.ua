@@ -17,7 +17,7 @@ import java.util.function.Function;
 public class JwtUtil {
 
     private final String SECRET_KEY = "sunatori_veteran_super_secret_key_needs_to_be_long_1234567890";
-    private final long JWT_EXPIRATION = 1000 * 60 * 60 * 10; // 10 годин
+    private final long JWT_EXPIRATION = 1000 * 60 * 60 * 10;
 
     private SecretKey getSigningKey() {
         return Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));

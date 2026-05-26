@@ -49,18 +49,15 @@ public class User {
     @Column(columnDefinition = "varchar(255)")
     private String expoPushToken;
 
-    // 1. Порожній конструктор
     public User() {
     }
 
-    // 2. Конструктор зі всіма полями
     public User(String name, String email, String password) {
         this.name = name;
         this.email = email;
         this.password = password;
     }
 
-    // 3. ГЕТТЕРИ ТА СЕТТЕРИ (Це виправить твою помилку)
 
     public Long getId() {
         return id;
@@ -78,7 +75,7 @@ public class User {
         this.name = name;
     }
 
-    public String getEmail() { // Саме цей метод шукає компилятор
+    public String getEmail() {
         return email;
     }
     public void setEmail(String email) {

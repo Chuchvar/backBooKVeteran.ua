@@ -7,7 +7,6 @@ import java.security.Key;
 public class FileEncryptionUtil {
 
     private static final String ALGORITHM = "AES";
-    // 16-byte key for AES-128 (Для продакшену ключ має зберігатися у змінних оточення!)
     private static final byte[] KEY = "SecretKey1234567".getBytes();
 
     public static byte[] encrypt(byte[] data) throws Exception {

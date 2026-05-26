@@ -40,7 +40,6 @@ public class BookingService {
         User user = userRepository.findFirstByEmail(userEmail)
                 .orElseThrow(() -> new RuntimeException("Користувача не знайдено"));
 
-        // Всі користувачі можуть бронювати. Знижка буде застосована лише для верифікованих.
 
         Sanatorium sanatorium = sanatoriumRepository.findById(sanatoriumId)
                 .orElseThrow(() -> new RuntimeException("Санаторій не знайдено"));

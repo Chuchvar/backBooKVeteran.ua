@@ -20,18 +20,15 @@ public class SupportChatCleanupService {
     @Autowired
     private SupportMessageRepository messageRepository;
 
-    // Run every hour to check for old closed chats
     @Scheduled(cron = "0 0 * * * *")
     @Transactional
     public void cleanupOldChats() {
-        // Find chats closed more than 24 hours ago
         LocalDateTime cutoffDate = LocalDateTime.now().minusHours(24);
         List<SupportChat> oldChats = chatRepository.findByStatusAndClosedAtBefore("CLOSED", cutoffDate);
 
         if (!oldChats.isEmpty()) {
             System.out.println("Cleaning up " + oldChats.size() + " old closed support chats...");
             for (SupportChat chat : oldChats) {
-                // Delete messages first to maintain referential integrity if there are constraints
                 messageRepository.deleteByChatId(chat.getId());
                 chatRepository.delete(chat);
             }

@@ -38,7 +38,6 @@ public class VerificationService {
             throw new RuntimeException("Документ є обов'язковим");
         }
 
-        // Збереження фото
         Path photoDir = Paths.get(UPLOAD_DIR_PHOTOS);
         if (!Files.exists(photoDir)) Files.createDirectories(photoDir);
         String photoName = UUID.randomUUID() + "_" + photo.getOriginalFilename();
@@ -46,7 +45,6 @@ public class VerificationService {
         byte[] encryptedPhoto = FileEncryptionUtil.encrypt(photo.getBytes());
         Files.write(photoPath, encryptedPhoto);
 
-        // Збереження документу
         Path docDir = Paths.get(UPLOAD_DIR_DOCS);
         if (!Files.exists(docDir)) Files.createDirectories(docDir);
         String docName = UUID.randomUUID() + "_" + document.getOriginalFilename();
@@ -54,11 +52,10 @@ public class VerificationService {
         byte[] encryptedDoc = FileEncryptionUtil.encrypt(document.getBytes());
         Files.write(docPath, encryptedDoc);
 
-        // Оновлення полів користувача
         user.setPhotoPath(photoPath.toString());
         user.setDocumentPath(docPath.toString());
         user.setVerificationStatus(VerificationStatus.PENDING);
-        user.setVerificationMessage(null); // Очищаємо попередні повідомлення
+        user.setVerificationMessage(null);
 
         return userRepository.save(user);
     }
@@ -101,8 +98,6 @@ public class VerificationService {
                     }
                 };
             } catch (Exception e) {
-                // У випадку помилки розшифрування (наприклад, старі незашифровані файли)
-                // Можна спробувати повернути оригінальний файл для сумісності
                 return new org.springframework.core.io.UrlResource(path.toUri());
             }
         } else {

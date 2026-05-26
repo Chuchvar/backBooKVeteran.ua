@@ -101,7 +101,6 @@ public class BookingController {
             }
             auditLogService.logAction(adminEmail, "UPDATE_BOOKING_STATUS", id.toString(), details);
             
-            // SEND PUSH NOTIFICATION
             String expoToken = updatedBooking.getUser().getExpoPushToken();
             if (expoToken != null && !expoToken.isEmpty()) {
                 try {
@@ -138,9 +137,8 @@ public class BookingController {
     public ResponseEntity<?> getBookingDocument(@PathVariable Long id) {
         try {
             Resource resource = bookingService.getBookingDocument(id);
-            String contentType = "application/pdf"; // За замовчуванням
+            String contentType = "application/pdf";
             
-            // Якщо треба визначити тип динамічно (по розширенню)
             String filename = resource.getFilename();
             if (filename != null) {
                 if (filename.toLowerCase().endsWith(".jpg") || filename.toLowerCase().endsWith(".jpeg")) contentType = "image/jpeg";
