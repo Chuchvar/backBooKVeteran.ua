@@ -256,4 +256,61 @@ public class AuthController {
         }
     }
 
+    @PutMapping("/profile")
+    public ResponseEntity<?> updateProfile(@RequestHeader(value = "Authorization", required = false) String token, @RequestBody Map<String, String> payload) {
+        if (token == null || !token.startsWith("Bearer ")) {
+            return ResponseEntity.status(401).body(Map.of("error", "Токен відсутній"));
+        }
+        try {
+            String jwt = token.substring(7);
+            String email = jwtUtil.extractUsername(jwt);
+            Optional<User> userOpt = userRepository.findFirstByEmail(email);
+
+            if (userOpt.isPresent()) {
+                User user = userOpt.get();
+                if (payload.containsKey("name")) {
+                    user.setName(payload.get("name"));
+                }
+                userRepository.save(user);
+                return ResponseEntity.ok(Map.of("message", "Профіль оновлено", "user", user));
+            }
+            return ResponseEntity.status(404).body(Map.of("error", "Користувача не знайдено"));
+        } catch (Exception e) {
+            return ResponseEntity.status(401).body(Map.of("error", "Невірний токен"));
+        }
+    }
+
+    @PutMapping("/password")
+    public ResponseEntity<?> updatePassword(@RequestHeader(value = "Authorization", required = false) String token, @RequestBody Map<String, String> payload) {
+        if (token == null || !token.startsWith("Bearer ")) {
+            return ResponseEntity.status(401).body(Map.of("error", "Токен відсутній"));
+        }
+        try {
+            String jwt = token.substring(7);
+            String email = jwtUtil.extractUsername(jwt);
+            Optional<User> userOpt = userRepository.findFirstByEmail(email);
+
+            if (userOpt.isPresent()) {
+                User user = userOpt.get();
+                String currentPassword = payload.get("currentPassword");
+                String newPassword = payload.get("newPassword");
+
+                if (currentPassword == null || newPassword == null) {
+                     return ResponseEntity.badRequest().body(Map.of("error", "Необхідно вказати поточний та новий пароль"));
+                }
+
+                if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
+                    return ResponseEntity.status(400).body(Map.of("error", "Поточний пароль вказано невірно"));
+                }
+
+                user.setPassword(passwordEncoder.encode(newPassword));
+                userRepository.save(user);
+                return ResponseEntity.ok(Map.of("message", "Пароль успішно змінено"));
+            }
+            return ResponseEntity.status(404).body(Map.of("error", "Користувача не знайдено"));
+        } catch (Exception e) {
+            return ResponseEntity.status(401).body(Map.of("error", "Невірний токен"));
+        }
+    }
+
 }
