@@ -70,6 +70,13 @@ public class SanatoriumService {
         sanatorium.setImagePaths(sanatoriumDetails.getImagePaths());
         sanatorium.setSpecializations(sanatoriumDetails.getSpecializations());
         
+        sanatorium.setGoogleRating(sanatoriumDetails.getGoogleRating() != null ? sanatoriumDetails.getGoogleRating() : 0.0);
+        sanatorium.setGoogleReviewsCount(sanatoriumDetails.getGoogleReviewsCount() != null ? sanatoriumDetails.getGoogleReviewsCount() : 0);
+        sanatorium.setRatingBooking(sanatoriumDetails.getRatingBooking() != null ? sanatoriumDetails.getRatingBooking() : 0.0);
+        sanatorium.setBookingReviewsCount(sanatoriumDetails.getBookingReviewsCount() != null ? sanatoriumDetails.getBookingReviewsCount() : 0);
+        sanatorium.setRatingTripAdvisor(sanatoriumDetails.getRatingTripAdvisor() != null ? sanatoriumDetails.getRatingTripAdvisor() : 0.0);
+        sanatorium.setTripAdvisorReviewsCount(sanatoriumDetails.getTripAdvisorReviewsCount() != null ? sanatoriumDetails.getTripAdvisorReviewsCount() : 0);
+        
         return repository.save(sanatorium);
     }
 
