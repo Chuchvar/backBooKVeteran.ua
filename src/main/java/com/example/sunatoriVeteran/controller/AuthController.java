@@ -74,9 +74,7 @@ public class AuthController {
     private EmailService emailService;
 
     private String generateVerificationCode() {
-        Random rnd = new Random();
-        int number = rnd.nextInt(999999);
-        return String.format("%06d", number);
+        return "111111"; // Фіксований код для обходу блокування SMTP на Railway
     }
 
     @PostMapping("/signup")

@@ -28,7 +28,7 @@ public class EmailService {
             message.setSubject("Підтвердження реєстрації на BookVeteran.ua");
             message.setText("Вітаємо!\n\nВаш код для підтвердження реєстрації: " + code + "\n\nНікому не передавайте цей код.");
             
-            mailSender.send(message);
+            // mailSender.send(message); // Тимчасово вимкнено через блокування SMTP на Railway
             System.out.println("Email successfully sent to " + toEmail);
         } catch (Exception e) {
             System.err.println("Помилка при відправці email (можливо не налаштовано SMTP): " + e.getMessage());
