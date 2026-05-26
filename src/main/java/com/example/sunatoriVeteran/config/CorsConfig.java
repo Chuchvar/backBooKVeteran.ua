@@ -16,16 +16,12 @@ public class CorsConfig {
     public CorsFilter corsFilter() {
         CorsConfiguration config = new CorsConfiguration();
 
-        // 1. Дозволяємо твій фронтенд (Vite)
-        config.setAllowedOrigins(List.of("http://localhost:5173"));
+        config.setAllowedOriginPatterns(List.of("*"));
 
-        // 2. Дозволяємо всі стандартні методи
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 
-        // 3. Дозволяємо всі заголовки (важливо для axios)
         config.setAllowedHeaders(List.of("*"));
 
-        // 4. Дозволяємо передачу кукі та токенів
         config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
