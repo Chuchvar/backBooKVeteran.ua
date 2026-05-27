@@ -57,6 +57,14 @@ public class BookingService {
         }
         if (pricePerDay == null) pricePerDay = 500.0;
 
+        LocalDate today = LocalDate.now();
+        if (checkInDate.isBefore(today)) {
+            throw new RuntimeException("Дата заїзду не може бути в минулому");
+        }
+        if (checkInDate.isAfter(today.plusYears(1))) {
+            throw new RuntimeException("Дата заїзду не може бути більше ніж на рік вперед");
+        }
+
         long days = java.time.temporal.ChronoUnit.DAYS.between(checkInDate, checkOutDate);
         if (days <= 0) {
             throw new RuntimeException("Дата виїзду має бути пізніше дати заїзду");
