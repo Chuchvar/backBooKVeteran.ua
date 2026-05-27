@@ -277,6 +277,9 @@ public class AuthController {
                 if (payload.containsKey("name")) {
                     user.setName(payload.get("name"));
                 }
+                if (payload.containsKey("phone")) {
+                    user.setPhone(payload.get("phone"));
+                }
                 userRepository.save(user);
                 return ResponseEntity.ok(Map.of("message", "Профіль оновлено", "user", user));
             }

@@ -24,4 +24,19 @@ public class AdminController {
             return ResponseEntity.ok(Map.of("message", banned ? "Користувача заблоковано" : "Користувача розблоковано", "isBanned", user.isBanned()));
         }).orElse(ResponseEntity.notFound().build());
     }
+
+    @PostMapping("/make-admin")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> makeAdmin(@RequestBody Map<String, String> payload) {
+        String email = payload.get("email");
+        if (email == null || email.trim().isEmpty()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Email is required"));
+        }
+        
+        return userRepository.findFirstByEmail(email).map(user -> {
+            user.setRole("ADMIN");
+            userRepository.save(user);
+            return ResponseEntity.ok(Map.of("message", "Користувачу успішно надано права адміністратора"));
+        }).orElse(ResponseEntity.status(404).body(Map.of("error", "Користувача з таким email не знайдено")));
+    }
 }
