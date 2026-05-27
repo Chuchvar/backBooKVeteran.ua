@@ -58,7 +58,12 @@ public class BookingService {
         if (pricePerDay == null) pricePerDay = 500.0;
 
         long days = java.time.temporal.ChronoUnit.DAYS.between(checkInDate, checkOutDate);
-        if (days <= 0) days = 1;
+        if (days <= 0) {
+            throw new RuntimeException("Дата виїзду має бути пізніше дати заїзду");
+        }
+        if (days > 60) {
+            throw new RuntimeException("Максимальний термін бронювання - 60 днів");
+        }
         
         Double basePrice = pricePerDay * days * guestsCount;
         Integer discount = 0;

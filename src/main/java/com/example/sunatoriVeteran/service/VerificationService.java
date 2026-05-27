@@ -37,25 +37,29 @@ public class VerificationService {
             throw new RuntimeException("Документ є обов'язковим");
         }
 
-        // Збереження фото
+        if (photo.getOriginalFilename() != null && !photo.getOriginalFilename().matches("^[a-zA-Z0-9.\\-_\\s()]+$")) {
+            throw new RuntimeException("Назва фото має бути англійською мовою");
+        }
+        if (document.getOriginalFilename() != null && !document.getOriginalFilename().matches("^[a-zA-Z0-9.\\-_\\s()]+$")) {
+            throw new RuntimeException("Назва документу має бути англійською мовою");
+        }
+
         Path photoDir = Paths.get(UPLOAD_DIR_PHOTOS);
         if (!Files.exists(photoDir)) Files.createDirectories(photoDir);
         String photoName = UUID.randomUUID() + "_" + photo.getOriginalFilename();
         Path photoPath = photoDir.resolve(photoName);
         Files.copy(photo.getInputStream(), photoPath);
 
-        // Збереження документу
         Path docDir = Paths.get(UPLOAD_DIR_DOCS);
         if (!Files.exists(docDir)) Files.createDirectories(docDir);
         String docName = UUID.randomUUID() + "_" + document.getOriginalFilename();
         Path docPath = docDir.resolve(docName);
         Files.copy(document.getInputStream(), docPath);
 
-        // Оновлення полів користувача
         user.setPhotoPath(photoPath.toString());
         user.setDocumentPath(docPath.toString());
         user.setVerificationStatus(VerificationStatus.PENDING);
-        user.setVerificationMessage(null); // Очищаємо попередні повідомлення
+        user.setVerificationMessage(null);
 
         return userRepository.save(user);
     }

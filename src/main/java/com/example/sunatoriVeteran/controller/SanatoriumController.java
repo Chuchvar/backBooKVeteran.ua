@@ -100,8 +100,8 @@ public class SanatoriumController {
             for (MultipartFile file : files) {
                 if (file.isEmpty()) continue;
                 
-                String originalFilename = StringUtils.cleanPath(file.getOriginalFilename());
-                String extension = originalFilename.contains(".") ? originalFilename.substring(originalFilename.lastIndexOf(".")) : "";
+                String originalFilename = file.getOriginalFilename();
+                String extension = (originalFilename != null && originalFilename.contains(".")) ? originalFilename.substring(originalFilename.lastIndexOf(".")) : "";
                 String fileName = UUID.randomUUID().toString() + extension;
                 
                 Path filePath = uploadPath.resolve(fileName);
