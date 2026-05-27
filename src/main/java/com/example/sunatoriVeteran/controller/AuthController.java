@@ -74,7 +74,7 @@ public class AuthController {
     private EmailService emailService;
 
     private String generateVerificationCode() {
-        return "111111"; // Фіксований код для обходу блокування SMTP на Railway
+        return "111111"; 
     }
 
     @PostMapping("/signup")

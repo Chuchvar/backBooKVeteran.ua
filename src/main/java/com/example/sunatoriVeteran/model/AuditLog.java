@@ -23,13 +23,13 @@ public class AuditLog {
     private String adminEmail;
 
     @Column(nullable = false)
-    private String action; // e.g., UPDATE_BOOKING, CREATE_SANATORIUM, DELETE_SANATORIUM
+    private String action;
 
     @Column(nullable = true)
-    private String entityId; // ID of the affected entity (Booking ID, Sanatorium ID, User ID)
+    private String entityId; 
 
     @Column(nullable = true, length = 1000)
-    private String details; // Any extra context
+    private String details; 
 
     @Column(nullable = false)
     private LocalDateTime timestamp;
