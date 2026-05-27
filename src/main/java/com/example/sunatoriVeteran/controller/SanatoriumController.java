@@ -25,7 +25,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 @RestController
 @RequestMapping("/api/sanatoriums")
-@CrossOrigin(origins = "http://localhost:3000")
 public class SanatoriumController {
 
     @Autowired
